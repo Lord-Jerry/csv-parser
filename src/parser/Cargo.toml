@@ -1,0 +1,13 @@
+[package]
+name = "lexer"
+version = "0.1.0"
+authors = ["Jeremiah Ajayi <lovinjerry004@gmail.com>"]
+license = ""
+edition = "2018"
+
+[features]
+debug = []
+
+[lib]
+name = "lexer"
+path = "lexer.rs"
