@@ -101,6 +101,67 @@ impl Lexer {
 
     }
 
+    // check if characters are valid identifier
+    fn qouted_identifier(&mut self) -> Token {
+        let mut kind = TokenKind::Identifier;
+        let mut identifier = String::from("");
+        let mut character = self.peek_char();
+        let start_position = self.position;
+           
+        // lex single quoted identifier
+        if character.unwrap() == '\'' {
+            identifier.push(self.eat_char());
+
+            // assign new character to character variable 
+            character = self.peek_char();
+
+            // check if lexer position hasn't exceeded code length and if character is in quote
+            while self.is_bound() {
+                if character.unwrap() == '\'' {
+                    identifier.push(self.eat_char());
+                    break;
+                }
+                identifier.push(self.eat_char());
+
+                // assign new character to character variable 
+                character = self.peek_char();
+            }
+        }
+        
+        // lex double quoted identifier
+        if character.unwrap() == '\"' {
+            identifier.push(self.eat_char());
+
+            // assign new character to character variable 
+            character = self.peek_char();
+
+            // check if lexer position hasn't exceeded code length and if character is in quote
+            while self.is_bound() {
+                if character.unwrap() == '\"' {
+                    identifier.push(self.eat_char());
+                    break;
+                }
+                identifier.push(self.eat_char());
+
+                // assign new character to character variable 
+                character = self.peek_char();
+            }
+        }
+        
+         
+
+        // if no avaliable valid character assign token kind to unknown 
+        if identifier.len()  < 1 {
+            kind = TokenKind::Unknown;
+        }
+
+        let end_position = self.position;
+
+        Token::new(kind, start_position, end_position, identifier)
+
+    }
+
+
     // check if characeter is an identified separator
     fn valid_separator(&mut self) -> Token {
         let mut separator = String::from("");
@@ -159,6 +220,11 @@ impl Lexer {
        let space = self.valid_space();
        if space.kind != TokenKind::Unknown {
             return Ok(space);
+        }
+
+        let quoted = self.qouted_identifier();
+        if quoted.kind != TokenKind::Unknown {
+            return Ok(quoted);
         }
 
        //let comment = self.valid_single_line_comment();
