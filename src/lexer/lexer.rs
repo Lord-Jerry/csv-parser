@@ -182,6 +182,27 @@ impl Lexer {
 
     }
 
+    // check if characeter is an identified separator
+    fn valid_newline(&mut self) -> Token {
+        let mut newline = String::from("");
+        let character = self.peek_char();
+        let mut kind = TokenKind::Newline;
+        let start_position = self.position;
+
+        if self.is_bound() && character.unwrap() == '\n' {
+            newline.push(self.eat_char());
+        }
+
+        if newline.len() < 1 {
+            kind = TokenKind::Unknown;
+            self.line += 1;
+        }
+
+        let end_position = self.position;
+        Token::new(kind, start_position, end_position, newline)
+
+    }
+
     // check if character is a valid white space
     fn valid_space(&mut self) -> Token {
         let mut space = String::from("");
@@ -225,6 +246,11 @@ impl Lexer {
         let quoted = self.qouted_identifier();
         if quoted.kind != TokenKind::Unknown {
             return Ok(quoted);
+        }
+
+        let newline = self.valid_newline();
+        if newline.kind != TokenKind::Unknown {
+            return Ok(newline)
         }
 
        //let comment = self.valid_single_line_comment();
