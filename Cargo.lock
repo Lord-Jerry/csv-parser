@@ -5,9 +5,17 @@ name = "csv-parser"
 version = "0.1.0"
 dependencies = [
  "lexer 0.1.0",
+ "parser 0.1.0",
 ]
 
 [[package]]
 name = "lexer"
 version = "0.1.0"
+
+[[package]]
+name = "parser"
+version = "0.1.0"
+dependencies = [
+ "lexer 0.1.0",
+]
 
