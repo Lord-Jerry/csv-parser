@@ -262,13 +262,15 @@ impl Lexer {
      }
 
 
-    pub fn lex(&mut self) {
+    pub fn lex(&mut self) -> Vec<Result<Token, Token>> {
+        let mut tokens = vec![];
 
         while self.is_bound() {
 
-            println!("{:#?}",self.lex_next());
+            tokens.push(self.lex_next());
         }
-       // println!("{:#?}", self.peek_char());
+       
+       tokens
     }
 
     
