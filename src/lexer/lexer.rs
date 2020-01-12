@@ -1,5 +1,5 @@
 pub mod kinds;
-use kinds::{ TokenKind, Token };
+use kinds::{Token, TokenKind};
 
 #[allow(dead_code)]
 pub struct Lexer {
@@ -22,7 +22,6 @@ pub struct Lexer {
 }
 
 impl Lexer {
-
     pub fn new(code: String) -> Self {
         Lexer {
             code: code.chars().collect(),
@@ -33,14 +32,15 @@ impl Lexer {
             line: 1,
             space_char: String::from("\t "),
             digit_char: String::from("0123456789"),
-            identifier_char: String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789"),
+            identifier_char: String::from(
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789",
+            ),
             separator_char: String::from(","),
         }
     }
 
-     // check if lexer position does not exceed code length
+    // check if lexer position does not exceed code length
     fn is_bound(&self) -> bool {
-
         if self.position < self.code.len() {
             return true;
         }
@@ -50,7 +50,6 @@ impl Lexer {
 
     // return character in current lexer position
     fn peek_char(&self) -> Option<char> {
-
         // check if lexer position hasn't exceeded code length
         if self.is_bound() {
             return Some(self.code[self.position]);
@@ -79,26 +78,23 @@ impl Lexer {
         let mut identifier = String::from("");
         let mut character = self.peek_char();
         let start_position = self.position;
-           
-        
-            // check if lexer position hasn't exceeded code length and if character is a valid aplhabetnumeric characeter
+
+        // check if lexer position hasn't exceeded code length and if character is a valid aplhabetnumeric characeter
         while self.is_bound() && self.identifier_char.contains(character.unwrap()) {
             identifier.push(self.eat_char());
 
-            // assign new character to character variable 
+            // assign new character to character variable
             character = self.peek_char();
         }
-         
 
-        // if no avaliable valid character assign token kind to unknown 
-        if identifier.len()  < 1 {
+        // if no avaliable valid character assign token kind to unknown
+        if identifier.len() < 1 {
             kind = TokenKind::Unknown;
         }
 
         let end_position = self.position;
 
         Token::new(kind, start_position, end_position, identifier)
-
     }
 
     // check if characters are valid identifier
@@ -107,12 +103,12 @@ impl Lexer {
         let mut identifier = String::from("");
         let mut character = self.peek_char();
         let start_position = self.position;
-           
+
         // lex single quoted identifier
         if character.unwrap() == '\'' {
             identifier.push(self.eat_char());
 
-            // assign new character to character variable 
+            // assign new character to character variable
             character = self.peek_char();
 
             // check if lexer position hasn't exceeded code length and if character is in quote
@@ -123,16 +119,16 @@ impl Lexer {
                 }
                 identifier.push(self.eat_char());
 
-                // assign new character to character variable 
+                // assign new character to character variable
                 character = self.peek_char();
             }
         }
-        
+
         // lex double quoted identifier
         if character.unwrap() == '\"' {
             identifier.push(self.eat_char());
 
-            // assign new character to character variable 
+            // assign new character to character variable
             character = self.peek_char();
 
             // check if lexer position hasn't exceeded code length and if character is in quote
@@ -143,24 +139,20 @@ impl Lexer {
                 }
                 identifier.push(self.eat_char());
 
-                // assign new character to character variable 
+                // assign new character to character variable
                 character = self.peek_char();
             }
         }
-        
-         
 
-        // if no avaliable valid character assign token kind to unknown 
-        if identifier.len()  < 1 {
+        // if no avaliable valid character assign token kind to unknown
+        if identifier.len() < 1 {
             kind = TokenKind::Unknown;
         }
 
         let end_position = self.position;
 
         Token::new(kind, start_position, end_position, identifier)
-
     }
-
 
     // check if characeter is an identified separator
     fn valid_separator(&mut self) -> Token {
@@ -179,7 +171,6 @@ impl Lexer {
 
         let end_position = self.position;
         Token::new(kind, start_position, end_position, separator)
-
     }
 
     // check if characeter is an identified separator
@@ -200,7 +191,6 @@ impl Lexer {
 
         let end_position = self.position;
         Token::new(kind, start_position, end_position, newline)
-
     }
 
     // check if character is a valid white space
@@ -227,7 +217,6 @@ impl Lexer {
 
     // run all lexer function
     fn lex_next(&mut self) -> Result<Token, Token> {
-
         let identifier = self.vaild_identifier();
         if identifier.kind != TokenKind::Unknown {
             return Ok(identifier);
@@ -235,11 +224,11 @@ impl Lexer {
 
         let separator = self.valid_separator();
         if separator.kind != TokenKind::Unknown {
-           return Ok(separator);
+            return Ok(separator);
         }
 
-       let space = self.valid_space();
-       if space.kind != TokenKind::Unknown {
+        let space = self.valid_space();
+        if space.kind != TokenKind::Unknown {
             return Ok(space);
         }
 
@@ -250,28 +239,29 @@ impl Lexer {
 
         let newline = self.valid_newline();
         if newline.kind != TokenKind::Unknown {
-            return Ok(newline)
+            return Ok(newline);
         }
 
-       //let comment = self.valid_single_line_comment();
+        //let comment = self.valid_single_line_comment();
         //if comment.kind != TokenKind::Unknown {
         //    return Ok(comment);
         //}
 
-        Err(Token::new(TokenKind::Unknown, self.position, self.position + 1, self.eat_char().to_string()))
-     }
-
+        Err(Token::new(
+            TokenKind::Unknown,
+            self.position,
+            self.position + 1,
+            self.eat_char().to_string(),
+        ))
+    }
 
     pub fn lex(&mut self) -> Vec<Result<Token, Token>> {
         let mut tokens = vec![];
 
         while self.is_bound() {
-
             tokens.push(self.lex_next());
         }
-       
-       tokens
-    }
 
-    
+        tokens
+    }
 }
