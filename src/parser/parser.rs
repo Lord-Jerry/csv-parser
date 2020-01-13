@@ -8,6 +8,7 @@ pub struct Parser {
     // Parser Position
     position: usize,
     header: Vec<String>,
+    output: Vec<HashMap<String, String>>,
 }
 
 impl Parser {
@@ -16,6 +17,7 @@ impl Parser {
             tokens,
             position: 0,
             header: vec![],
+            output: vec![],
         }
     }
 
@@ -36,11 +38,6 @@ impl Parser {
         }
 
         None
-    }
-
-    // if error occurs while parsing we would want to revert parser position to position before error
-    fn revert(&mut self, position: usize) {
-        self.position = position;
     }
 
     // return current character in lexer position and increment position
@@ -68,7 +65,6 @@ impl Parser {
             self.eat_token();
         }
 
-        println!("{:?}", header);
         self.header = header;
 
         // self.parse_body();
@@ -78,7 +74,6 @@ impl Parser {
         let header = &self.header.clone();
         let mut count = 0;
         let mut group = HashMap::new();
-        let mut body = vec![];
 
         while self.is_bound() {
             if self.peek_token().unwrap().kind == TokenKind::Newline {
@@ -91,26 +86,24 @@ impl Parser {
             let temp = &token.token;
             let kind = &token.kind;
 
-            if body.len() >= header.len() {
-                panic!("error expected newline but got {:?}", temp);
-            } else if kind == &TokenKind::Identifier {
+            if kind == &TokenKind::Identifier {
                 if count < header.len() {
-                    group.insert(&header[count], temp.to_string());
+                    group.insert(header[count].to_string(), temp.to_string());
                     count += 1;
                 }
             }
         }
 
-        body.push(&group);
-
-        println!("{:?}", body);
+        self.output.push(group);
     }
 
-    pub fn parse_all(&mut self) {
+    pub fn parse_all(&mut self) -> Vec<HashMap<String, String>> {
         // println!("{:?}", self.tokens);
         self.parse_header();
         while self.is_bound() {
             self.parse_body();
         }
+
+        self.output.clone()
     }
 }
