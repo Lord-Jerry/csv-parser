@@ -51,6 +51,7 @@ impl Parser {
         let mut header = vec![];
         let mut temp;
 
+        // while next token is not a newline, and position is in bound
         while self.is_bound() && (self.peek_token().unwrap().kind != TokenKind::Newline) {
             let token = &self.eat_token();
             temp = &token.token;
@@ -61,6 +62,7 @@ impl Parser {
             }
         }
 
+        // if next token is a newline, eat token
         if self.peek_token().unwrap().kind == TokenKind::Newline {
             self.eat_token();
         }
@@ -81,7 +83,6 @@ impl Parser {
                 break;
             }
 
-            // println!("{:?}", self.peek_token());
             let token = &self.eat_token();
             let temp = &token.token;
             let kind = &token.kind;
