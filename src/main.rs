@@ -3,13 +3,24 @@ use parser::Parser;
 
 fn main() {
     let tokens = Lexer::new(
-    "name, age, location, cars,
-     jerry, 18, lagos, yes , 20,
-     lord, 20, ekiti, no, 78
-     jade, 20, akure, no, 78"
+        "name, age, location,
+     jerry, 18, lagos, yes,
+     lord, 20, ekiti, no,
+     jade, 20, akure, no,
+     jade, 20, akure, no,
+     jade, 20, akure, no,
+     jade, 20, akure, no,
+     jade, 20, akure, no,
+     jade, 20, akure, no,
+     jade, 20, akure, no,
+     jade, 20, akure, no,
+     jade, 20, akure, no,
+     jade, 20, akure, no,
+     jade, 20, akure, no,"
             .to_string(),
     )
     .lex();
     // println!("{:?}", tokens);
-    Parser::new(tokens).parse_all();
+    let output = Parser::new(tokens).parse_all();
+    println!("{:#?}", output);
 }
