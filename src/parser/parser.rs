@@ -44,10 +44,10 @@ impl Parser {
     }
 
     // return current character in lexer position and increment position
-    fn eat_token(&mut self) -> &Result<Token, Token> {
+    fn eat_token(&mut self) -> &Token {
         self.position += 1;
 
-        &self.tokens[self.position - 1]
+        self.tokens[self.position - 1].as_ref().unwrap()
     }
 
     fn parse_header(&mut self) {
@@ -55,9 +55,9 @@ impl Parser {
         let mut temp;
 
         while self.is_bound() && (self.peek_token().unwrap().kind != TokenKind::Newline) {
-            temp = &self.tokens[self.position].as_ref().unwrap().token;
-            let kind = &self.tokens[self.position].as_ref().unwrap().kind;
-            self.position += 1;
+            let token = &self.eat_token();
+            temp = &token.token;
+            let kind = &token.kind;
 
             if kind == &TokenKind::Identifier {
                 header.push(temp.to_string());
@@ -75,28 +75,27 @@ impl Parser {
     }
 
     fn parse_body(&mut self) {
-        let header = &self.header;
+        let header = &self.header.clone();
         let mut count = 0;
         let mut group = HashMap::new();
         let mut body = vec![];
 
         while self.is_bound() {
             if self.peek_token().unwrap().kind == TokenKind::Newline {
-                self.position += 1;
+                self.eat_token();
                 break;
             }
 
             // println!("{:?}", self.peek_token());
-            let token = &self.tokens[self.position].as_ref();
-            let temp = &token.unwrap().token;
-            let kind = &token.unwrap().kind;
-            self.position += 1;
+            let token = &self.eat_token();
+            let temp = &token.token;
+            let kind = &token.kind;
 
             if body.len() >= header.len() {
                 panic!("error expected newline but got {:?}", temp);
             } else if kind == &TokenKind::Identifier {
                 if count < header.len() {
-                    &group.insert(&header[count], temp.to_string());
+                    group.insert(&header[count], temp.to_string());
                     count += 1;
                 }
             }
