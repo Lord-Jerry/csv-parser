@@ -33,7 +33,7 @@ impl Lexer {
             space_char: String::from("\t "),
             digit_char: String::from("0123456789"),
             identifier_char: String::from(
-                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789",
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-0123456789@.",
             ),
             separator_char: String::from(","),
         }

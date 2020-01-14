@@ -3,20 +3,9 @@ use parser::Parser;
 
 fn main() {
     let tokens = Lexer::new(
-        "name, age, location,
-     jerry, 18, lagos, yes,
-     lord, 20, ekiti, no,
-     jade, 20, akure, no,
-     jade, 20, akure, no,
-     jade, 20, akure, no,
-     jade, 20, akure, no,
-     jade, 20, akure, no,
-     jade, 20, akure, no,
-     jade, 20, akure, no,
-     jade, 20, akure, no,
-     jade, 20, akure, no,
-     jade, 20, akure, no,
-     jade, 20, akure, no,"
+        "Name,Email,Phone Number,Address
+        Bob Smith,bob@example.com,123-456-7890,123 Fake Street
+        Mike Jones,mike@example.com,098-765-4321,321 Fake Avenue"
             .to_string(),
     )
     .lex();
